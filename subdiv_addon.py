@@ -6,15 +6,8 @@ bl_info = {
 
 import bpy
 
-def initSceneProperties(scn):
-    bpy.types.Scene.MyInt = bpy.props.IntProperty(
-        name = "Integer", 
-        description = "Enter an integer")
-    return 
-
 def subdiv_select():
-    initSceneProperties(bpy.context.scene)
-    num = bpy.context.scene.MyInt
+    num = bpy.context.object.my_global_num
 
     for o in bpy.context.selected_objects:
         if (o.type == 'MESH' and 'SUBSURF' not in (mod.type for mod in o.modifiers)):
@@ -57,7 +50,9 @@ class HelloWorldPanel(bpy.types.Panel):
     def draw(self, context):
         lt = self.layout
         scn = context.scene
-        lt.prop(scn, 'MyInt', icon='BLENDER', toggle=True)
+        obj = context.object
+        # lt.prop(scn, 'MyInt', icon='BLENDER', toggle=True)
+        lt.prop(obj, "my_global_num")
         lt.operator('object.subdiv_operator')
         lt.operator('object.unsubdiv_operator')
 
@@ -65,6 +60,11 @@ def register():
     bpy.utils.register_class(HelloWorldPanel)
     bpy.utils.register_class(SelectSubdive)
     bpy.utils.register_class(SelectUnsubdive)
+    bpy.types.Object.my_global_num = bpy.props.IntProperty(
+        name="Subdivision",
+        description="Integer Value",
+        default=1,
+    )
 
 
 def unregister():
@@ -74,4 +74,3 @@ def unregister():
 
 if __name__ == "__main__":
     register()
-    
